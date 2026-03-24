@@ -1,0 +1,22 @@
+name: Coverage Publisher Example
+
+on: [push]
+
+jobs:
+  test-and-push-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.21'
+
+      - name: Run unit tests
+        run: go test -v -coverprofile=coverage.txt ./...
+
+      - name: Push coverage to prometheus
+        uses: ./
+        with:
+          prometheus_endpoint: http://prometheus-data.cyderes.cloud/
+          labels: branch=${{ github.ref_name }}
