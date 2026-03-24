@@ -1,0 +1,12 @@
+name: 'Go Code Coverage to Prometheus'
+description: 'Calculates and pushes Go code coverage to Prometheus'
+inputs:
+  prometheus_endpoint:
+    description: 'The Prometheus Pushgateway endpoint'
+    required: true
+  labels:
+    description: 'Additional labels to add to the metric (e.g., "env=prod,region=us-east-1")'
+    required: false
+runs:
+  using: 'node20'
+  main: 'dist/index.js' 
