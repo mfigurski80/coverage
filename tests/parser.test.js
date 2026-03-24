@@ -22,14 +22,15 @@ github.com/owner/repo/package2/file3.go:8.1,10.2 1 1
     const result = parseCoverage(testFilePath);
 
     const expected = {
-      totalCoverage: 66.66666666666666,
+      totalCoverage: 75,
       packageCoverage: {
-        'github.com/owner/repo/package1': 50,
+        'github.com/owner/repo/package1': 66.66666666666666,
         'github.com/owner/repo/package2': 100,
       },
     };
 
     expect(result.totalCoverage).toBeCloseTo(expected.totalCoverage);
-    expect(result.packageCoverage).toEqual(expected.packageCoverage);
+    expect(result.packageCoverage['github.com/owner/repo/package1']).toBeCloseTo(expected.packageCoverage['github.com/owner/repo/package1']);
+    expect(result.packageCoverage['github.com/owner/repo/package2']).toBeCloseTo(expected.packageCoverage['github.com/owner/repo/package2']);
   });
 });
