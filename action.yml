@@ -1,5 +1,6 @@
 name: 'Go Code Coverage to Prometheus'
 description: 'Calculates and pushes Go code coverage to Prometheus'
+icon: check-square
 inputs:
   prometheus_endpoint:
     description: 'The Prometheus Pushgateway endpoint'
