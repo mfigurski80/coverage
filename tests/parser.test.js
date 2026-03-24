@@ -1,21 +1,35 @@
-
-const assert = require('assert');
+const fs = require('fs');
 const path = require('path');
-const { parseCoverage: parse } = require('../src/parser.js');
+const { parseCoverage } = require('../src/parser');
 
-const testFilePath = path.join(__dirname, 'coverage.txt');
+describe('parseCoverage', () => {
+  const testFilePath = path.join(__dirname, 'coverage.txt');
 
-const expected = {
-  totalCoverage: 66.66666666666666,
-  packageCoverage: {
-    'github.com/owner/repo/package1': 50,
-    'github.com/owner/repo/package2': 100
-  }
-};
+  beforeAll(() => {
+    const dummyCoverage = `mode: set
+github.com/owner/repo/package1/file1.go:10.5,12.5 1 0
+github.com/owner/repo/package1/file2.go:15.1,17.2 2 1
+github.com/owner/repo/package2/file3.go:8.1,10.2 1 1
+`;
+    fs.writeFileSync(testFilePath, dummyCoverage);
+  });
 
-const result = parse(testFilePath);
+  afterAll(() => {
+    fs.unlinkSync(testFilePath);
+  });
 
-assert.deepStrictEqual(result, expected);
+  it('should parse coverage.txt and calculate coverage percentages', () => {
+    const result = parseCoverage(testFilePath);
 
-console.log('Test passed!');
+    const expected = {
+      totalCoverage: 66.66666666666666,
+      packageCoverage: {
+        'github.com/owner/repo/package1': 50,
+        'github.com/owner/repo/package2': 100,
+      },
+    };
 
+    expect(result.totalCoverage).toBeCloseTo(expected.totalCoverage);
+    expect(result.packageCoverage).toEqual(expected.packageCoverage);
+  });
+});
