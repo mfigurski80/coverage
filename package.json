@@ -12,6 +12,10 @@
   "keywords": [],
   "dependencies": {
     "@actions/core": "^3.0.0",
-    "@actions/github": "^9.0.0"
+    "@actions/github": "^9.0.0",
+    "axios": "^1.13.6"
+  },
+  "devDependencies": {
+    "sinon": "^21.0.3"
   }
 }
