@@ -1,6 +1,6 @@
 name: Coverage Publisher Example
 
-on: [push]
+on: [workflow_dispatch]
 
 jobs:
   test-and-push-coverage:
