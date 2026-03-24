@@ -23,8 +23,8 @@ jobs:
         go-version: 1.21
     - name: Run tests with coverage
       run: go test -v -coverprofile=coverage.txt ./...
-    - name: Push coverage to Prometheus
-      uses: your-org/go-coverage-prometheus-action@v1
+    - name: Go Code Coverage to Prometheus
+      uses: mfigurski80/coverage@v0.0.2
       with:
         prometheus_endpoint: 'http://your-pushgateway.com:9091'
         labels: 'branch=${{ github.ref_name }}'
@@ -36,8 +36,8 @@ The action generates metrics that look like this:
 
 ```
 # TYPE go_test_coverage_percentage gauge
-go_test_coverage_percentage{package="github.com/your-org/your-repo/package1",repository="your-repo",branch="main"} 85.2
-go_test_coverage_percentage{package="github.com/your-org/your-repo/package2",repository="your-repo",branch="main"} 92.0
+go_test_coverage_percentage{package="github.com/mfigurski80/coverage/package1",repository="coverage",branch="main"} 85.2
+go_test_coverage_percentage{package="github.com/mfigurski80/coverage/package2",repository="coverage",branch="main"} 92.0
 ```
 
 ## Core Links
