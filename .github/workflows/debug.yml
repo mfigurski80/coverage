@@ -1,0 +1,34 @@
+name: Debug Action
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build action
+        run: npm run build
+
+      - name: Create dummy coverage file
+        run: |
+          echo 'mode: set' > coverage.txt
+          echo 'github.com/owner/repo/package1/file1.go:10.5,12.5 1 0' >> coverage.txt
+          echo 'github.com/owner/repo/package1/file2.go:15.1,17.2 2 1' >> coverage.txt
+          echo 'github.com/owner/repo/package2/file3.go:8.1,10.2 1 1' >> coverage.txt
+      
+      - name: Run the action
+        uses: ./
+        with:
+          prometheus_endpoint: 'http://localhost:9091' # This is a dummy endpoint for debugging
+          labels: 'branch=debug,actor=${{ github.actor }}'
