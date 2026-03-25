@@ -1,4 +1,4 @@
-name: Debug Action
+name: Integration Test
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  debug:
+  integration-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,8 +27,18 @@ jobs:
           echo 'github.com/owner/repo/package1/file2.go:15.1,17.2 2 1' >> coverage.txt
           echo 'github.com/owner/repo/package2/file3.go:8.1,10.2 1 1' >> coverage.txt
       
+      - name: Start Prometheus Pushgateway
+        run: docker run -d --name pushgateway -p 9091:9091 prom/pushgateway
+
       - name: Run the action
         uses: ./
         with:
-          prometheus_endpoint: 'http://localhost:9091' # This is a dummy endpoint for debugging
+          prometheus_endpoint: 'http://localhost:9091'
           labels: 'branch=debug,actor=${{ github.actor }}'
+
+      - name: Stop and remove Prometheus Pushgateway
+        if: always()
+        run: |
+          docker logs pushgateway
+          docker stop pushgateway
+          docker rm pushgateway

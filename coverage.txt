@@ -1,0 +1,4 @@
+mode: set
+github.com/owner/repo/package1/file1.go:10.5,12.5 1 0
+github.com/owner/repo/package1/file2.go:15.1,17.2 2 1
+github.com/owner/repo/package2/file3.go:8.1,10.2 1 1
