@@ -1,8 +1,8 @@
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-function parseCoverage(filePath) {
+export function parseCoverage(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const lines = fileContent.split('\n');
 
@@ -52,7 +52,3 @@ function parseCoverage(filePath) {
     packageCoverage: perPackageCoverage,
   };
 }
-
-module.exports = {
-  parseCoverage,
-};

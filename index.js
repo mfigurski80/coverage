@@ -1,10 +1,10 @@
-const path = require('path');
-const { parseCoverage } = require('./src/parser.js');
-const pushMetrics = require('./src/pusher.js');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import path from 'path';
+import { parseCoverage } from './src/parser.js';
+import { pushMetrics } from './src/pusher.js';
 
 async function run() {
-  const core = await import('@actions/core');
-  const github = await import('@actions/github');
   try {
     const prometheusEndpoint = core.getInput('prometheus_endpoint', { required: true });
     const labelsStr = core.getInput('labels');

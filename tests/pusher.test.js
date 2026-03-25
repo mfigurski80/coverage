@@ -1,5 +1,6 @@
-const axios = require('axios');
-const pushMetrics = require('../src/pusher');
+import {describe, it, expect, jest} from '@jest/globals';
+import axios from 'axios';
+import { pushMetrics } from '../src/pusher.js';
 
 describe('pushMetrics', () => {
   it('should send coverage metrics to the Prometheus Pushgateway', async () => {

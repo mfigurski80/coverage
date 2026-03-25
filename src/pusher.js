@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 function formatLabels(labels) {
   return Object.entries(labels)
@@ -6,7 +6,7 @@ function formatLabels(labels) {
     .join(',');
 }
 
-module.exports = async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels) {
+export async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels) {
   const { totalCoverage, packageCoverage } = coverageData;
 
   let metrics = `# TYPE go_test_coverage_percentage gauge\n`;
@@ -33,4 +33,4 @@ module.exports = async function pushMetrics(prometheusEndpoint, jobName, coverag
     }
     throw error;
   });
-};
+}
