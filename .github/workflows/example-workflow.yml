@@ -10,13 +10,13 @@ jobs:
 
       - uses: actions/setup-go@v3
         with:
-          go-version: '1.21'
+          go-version: '1.25'
 
-      - name: Run unit tests
-        run: go test -v -coverprofile=coverage.txt ./...
+      - name: Load coverage from previous action step
+        run: cat coverage.txt
 
       - name: Push coverage to prometheus
         uses: ./
         with:
-          prometheus_endpoint: http://prometheus-data.cyderes.cloud/
+          prometheus_endpoint: http://pushgateway.dev-cyderes.io
           labels: branch=${{ github.ref_name }}
