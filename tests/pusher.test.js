@@ -19,12 +19,12 @@ describe('pushMetrics', () => {
 
     await pushMetrics(prometheusEndpoint, jobName, coverageData, labels);
 
-    const expectedUrl = `${prometheusEndpoint}/metrics/job/${jobName}`;
+    const expectedUrl = `${prometheusEndpoint}/metrics/job/${jobName}/branch/main`;
     const expectedBody = `# TYPE go_test_coverage_percentage gauge
-go_test_coverage_percentage{job="test-job", branch="main"} 75
+go_test_coverage_percentage 75
 # TYPE go_test_coverage_package_percentage gauge
-go_test_coverage_package_percentage{job="test-job", branch="main",package="github.com/owner/repo/package1"} 66.66666666666666
-go_test_coverage_package_percentage{job="test-job", branch="main",package="github.com/owner/repo/package2"} 100
+go_test_coverage_package_percentage{package="github.com/owner/repo/package1"} 66.66666666666666
+go_test_coverage_package_percentage{package="github.com/owner/repo/package2"} 100
 `;
 
     expect(axiosPostSpy).toHaveBeenCalledWith(expectedUrl, expectedBody, {
