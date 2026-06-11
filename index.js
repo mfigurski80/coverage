@@ -20,7 +20,8 @@ async function run() {
       }
     }
 
-    const jobName = github.context.job;
+    const { owner, repo } = github.context.repo;
+    const jobName = `${owner}_${repo}_${github.context.job}`;
 
     await pushMetrics(prometheusEndpoint, jobName, coverageData, labels);
 
