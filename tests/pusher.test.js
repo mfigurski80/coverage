@@ -9,10 +9,11 @@ describe('pushMetrics', () => {
     const prometheusEndpoint = 'http://localhost:9091';
     const jobName = 'test-job';
     const coverageData = {
-      totalCoverage: 75,
+      totalStatements: 4,
+      totalCoveredStatements: 3,
       packageCoverage: {
-        'github.com/owner/repo/package1': 66.66666666666666,
-        'github.com/owner/repo/package2': 100,
+        'github.com/owner/repo/package1': { totalStatements: 3, coveredStatements: 2 },
+        'github.com/owner/repo/package2': { totalStatements: 1, coveredStatements: 1 },
       },
     };
     const labels = { branch: 'main' };
@@ -20,11 +21,16 @@ describe('pushMetrics', () => {
     await pushMetrics(prometheusEndpoint, jobName, coverageData, labels);
 
     const expectedUrl = `${prometheusEndpoint}/metrics/job/${jobName}/branch/main`;
-    const expectedBody = `# TYPE go_test_coverage_percentage gauge
-go_test_coverage_percentage 75
-# TYPE go_test_coverage_package_percentage gauge
-go_test_coverage_package_percentage{package="github.com/owner/repo/package1"} 66.66666666666666
-go_test_coverage_package_percentage{package="github.com/owner/repo/package2"} 100
+    const expectedBody = `# TYPE go_test_coverage_statements gauge
+go_test_coverage_statements 4
+# TYPE go_test_coverage_covered_statements gauge
+go_test_coverage_covered_statements 3
+# TYPE go_test_coverage_package_statements gauge
+# TYPE go_test_coverage_package_covered_statements gauge
+go_test_coverage_package_statements{package="github.com/owner/repo/package1"} 3
+go_test_coverage_package_covered_statements{package="github.com/owner/repo/package1"} 2
+go_test_coverage_package_statements{package="github.com/owner/repo/package2"} 1
+go_test_coverage_package_covered_statements{package="github.com/owner/repo/package2"} 1
 `;
 
     expect(axiosPostSpy).toHaveBeenCalledWith(expectedUrl, expectedBody, {
@@ -37,7 +43,7 @@ go_test_coverage_package_percentage{package="github.com/owner/repo/package2"} 10
   it('should use job-only URL when no labels are provided', async () => {
     const axiosPostSpy = jest.spyOn(axios, 'post').mockResolvedValue();
 
-    await pushMetrics('http://localhost:9091', 'test-job', { totalCoverage: 50, packageCoverage: {} }, {});
+    await pushMetrics('http://localhost:9091', 'test-job', { totalStatements: 10, totalCoveredStatements: 5, packageCoverage: {} }, {});
 
     expect(axiosPostSpy).toHaveBeenCalledWith(
       'http://localhost:9091/metrics/job/test-job',

@@ -9,15 +9,19 @@ function fmtLabelPath(labels) {
 }
 
 export async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels) {
-  const { totalCoverage, packageCoverage } = coverageData;
+  const { totalStatements, totalCoveredStatements, packageCoverage } = coverageData;
 
-  let metrics = `# TYPE go_test_coverage_percentage gauge\n`;
-  metrics += `go_test_coverage_percentage ${totalCoverage}\n`;
-  metrics += `# TYPE go_test_coverage_package_percentage gauge\n`;
+  let metrics = `# TYPE go_test_coverage_statements gauge\n`;
+  metrics += `go_test_coverage_statements ${totalStatements}\n`;
+  metrics += `# TYPE go_test_coverage_covered_statements gauge\n`;
+  metrics += `go_test_coverage_covered_statements ${totalCoveredStatements}\n`;
+  metrics += `# TYPE go_test_coverage_package_statements gauge\n`;
+  metrics += `# TYPE go_test_coverage_package_covered_statements gauge\n`;
 
   for (const pkgName in packageCoverage) {
-    const pkgCoverage = packageCoverage[pkgName];
-    metrics += `go_test_coverage_package_percentage{package="${pkgName}"} ${pkgCoverage}\n`;
+    const { totalStatements: pkgTotal, coveredStatements: pkgCovered } = packageCoverage[pkgName];
+    metrics += `go_test_coverage_package_statements{package="${pkgName}"} ${pkgTotal}\n`;
+    metrics += `go_test_coverage_package_covered_statements{package="${pkgName}"} ${pkgCovered}\n`;
   }
 
   const url = `${prometheusEndpoint}/metrics/job/${jobName}${fmtLabelPath(labels)}`;
