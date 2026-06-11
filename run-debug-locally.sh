@@ -24,6 +24,7 @@ export INPUT_PROMETHEUS_ENDPOINT='http://localhost:9091'
 export INPUT_LABELS='branch=local-debug,actor=local'
 export GITHUB_WORKSPACE=$(pwd)
 export GITHUB_JOB='local-job'
+export GITHUB_REPOSITORY='owner/repo'
 
 node dist/index.js
 

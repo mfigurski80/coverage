@@ -39,16 +39,9 @@ export function parseCoverage(filePath) {
     }
   }
 
-  const totalCoverage = totalStatements > 0 ? (totalCoveredStatements / totalStatements) * 100 : 0;
-
-  const perPackageCoverage = {};
-  for (const pkgName in packageCoverage) {
-    const pkg = packageCoverage[pkgName];
-    perPackageCoverage[pkgName] = pkg.totalStatements > 0 ? (pkg.coveredStatements / pkg.totalStatements) * 100 : 0;
-  }
-
   return {
-    totalCoverage: totalCoverage,
-    packageCoverage: perPackageCoverage,
+    totalStatements,
+    totalCoveredStatements,
+    packageCoverage,
   };
 }
