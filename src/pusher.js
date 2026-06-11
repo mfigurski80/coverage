@@ -22,16 +22,15 @@ export async function pushMetrics(prometheusEndpoint, jobName, coverageData, lab
 
   const url = `${prometheusEndpoint}/metrics/job/${jobName}${fmtLabelPath(labels)}`;
 
-  await axios.post(url, metrics, {
-    headers: { 'Content-Type': 'text/plain' },
-  }).then(() => {
+  try {
+    await axios.post(url, metrics, { headers: { 'Content-Type': 'text/plain' } });
     console.log('Successfully pushed metrics to Prometheus Pushgateway.');
-  }).catch((error) => {
-    console.error('Error pushing metrics to Prometheus Pushgateway:', error.message);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
-      console.error('Response status:', error.response.status);
+  } catch (err) {
+    console.error('Error pushing metrics to Prometheus Pushgateway:', err.message);
+    if (err.response) {
+      console.error('Response data:', err.response.data);
+      console.error('Response status:', err.response.status);
     }
-    throw error;
-  });
+    throw err;
+  }
 }
