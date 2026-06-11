@@ -33,4 +33,18 @@ go_test_coverage_package_percentage{package="github.com/owner/repo/package2"} 10
 
     axiosPostSpy.mockRestore();
   });
+
+  it('should use job-only URL when no labels are provided', async () => {
+    const axiosPostSpy = jest.spyOn(axios, 'post').mockResolvedValue();
+
+    await pushMetrics('http://localhost:9091', 'test-job', { totalCoverage: 50, packageCoverage: {} }, {});
+
+    expect(axiosPostSpy).toHaveBeenCalledWith(
+      'http://localhost:9091/metrics/job/test-job',
+      expect.any(String),
+      expect.any(Object),
+    );
+
+    axiosPostSpy.mockRestore();
+  });
 });
