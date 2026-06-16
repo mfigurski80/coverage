@@ -47,7 +47,7 @@ go_test_coverage_package_covered_statements{package="github.com/owner/repo/packa
     await pushMetrics('http://localhost:9091', 'test-job', { totalStatements: 1, totalCoveredStatements: 1, packageCoverage: {} }, { branch: 'ci/my-feature' });
 
     expect(axiosPostSpy).toHaveBeenCalledWith(
-      'http://localhost:9091/metrics/job/test-job/branch/ci%2Fmy-feature',
+      'http://localhost:9091/metrics/job/test-job/branch/ci_my-feature',
       expect.any(String),
       expect.any(Object),
     );
