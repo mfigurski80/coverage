@@ -39061,7 +39061,7 @@ function fmtLabelPath(labels) {
   if (!labels || !Object.keys(labels).length) return "";
   return "/" + Object.entries(labels).map(([key, value]) => `${key}/${value}`).join("/");
 }
-async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels) {
+async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels, username, password) {
   const { totalStatements, totalCoveredStatements, packageCoverage } = coverageData;
   let metrics = `# TYPE go_test_coverage_statements gauge
 `;
@@ -39084,7 +39084,9 @@ async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels) {
   }
   const url2 = `${prometheusEndpoint}/metrics/job/${jobName}${fmtLabelPath(labels)}`;
   try {
-    await axios_default.post(url2, metrics, { headers: { "Content-Type": "text/plain" } });
+    const config = { headers: { "Content-Type": "text/plain" } };
+    if (username && password) config.auth = { username, password };
+    await axios_default.post(url2, metrics, config);
     console.log("Successfully pushed metrics to Prometheus Pushgateway.");
   } catch (err) {
     console.error("Error pushing metrics to Prometheus Pushgateway:", err.message);
@@ -39101,6 +39103,8 @@ async function run() {
   try {
     const prometheusEndpoint = getInput("prometheus_endpoint", { required: true });
     const labelsStr = getInput("labels");
+    const username = getInput("username");
+    const password = getInput("password");
     const coverageFilePath = path2.join(process.env.GITHUB_WORKSPACE, "coverage.txt");
     const coverageData = parseCoverage(coverageFilePath);
     const labels = {};
@@ -39112,7 +39116,7 @@ async function run() {
     }
     const { owner, repo } = context2.repo;
     const jobName = `${owner}_${repo}_${context2.job}`;
-    await pushMetrics(prometheusEndpoint, jobName, coverageData, labels);
+    await pushMetrics(prometheusEndpoint, jobName, coverageData, labels, username, password);
   } catch (error2) {
     setFailed(error2.message);
   }
