@@ -4,7 +4,7 @@ function fmtLabelPath(labels) {
   if (!labels || !Object.keys(labels).length) return '';
 
   return '/' + Object.entries(labels)
-    .map(([key, value]) => `${key}/${value}`)
+    .map(([key, value]) => `${key}/${encodeURIComponent(value)}`)
     .join('/')
 }
 

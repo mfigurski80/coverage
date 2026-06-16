@@ -39059,7 +39059,7 @@ var {
 // src/pusher.js
 function fmtLabelPath(labels) {
   if (!labels || !Object.keys(labels).length) return "";
-  return "/" + Object.entries(labels).map(([key, value]) => `${key}/${value}`).join("/");
+  return "/" + Object.entries(labels).map(([key, value]) => `${key}/${encodeURIComponent(value)}`).join("/");
 }
 async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels, username, password) {
   const { totalStatements, totalCoveredStatements, packageCoverage } = coverageData;

@@ -41,6 +41,20 @@ go_test_coverage_package_covered_statements{package="github.com/owner/repo/packa
     axiosPostSpy.mockRestore();
   });
 
+  it('should encode slashes in label values', async () => {
+    const axiosPostSpy = jest.spyOn(axios, 'post').mockResolvedValue();
+
+    await pushMetrics('http://localhost:9091', 'test-job', { totalStatements: 1, totalCoveredStatements: 1, packageCoverage: {} }, { branch: 'ci/my-feature' });
+
+    expect(axiosPostSpy).toHaveBeenCalledWith(
+      'http://localhost:9091/metrics/job/test-job/branch/ci%2Fmy-feature',
+      expect.any(String),
+      expect.any(Object),
+    );
+
+    axiosPostSpy.mockRestore();
+  });
+
   it('should use job-only URL when no labels are provided', async () => {
     const axiosPostSpy = jest.spyOn(axios, 'post').mockResolvedValue();
 
