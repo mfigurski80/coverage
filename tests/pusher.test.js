@@ -1,4 +1,5 @@
-import {describe, it, expect, jest} from '@jest/globals';
+import {describe, it, expect, jest, afterEach} from '@jest/globals';
+import nock from 'nock';
 import axios from 'axios';
 import { pushMetrics } from '../src/pusher.js';
 
@@ -52,5 +53,34 @@ go_test_coverage_package_covered_statements{package="github.com/owner/repo/packa
     );
 
     axiosPostSpy.mockRestore();
+  });
+
+  describe('basic auth', () => {
+    afterEach(() => nock.cleanAll());
+
+    it('should send Authorization header with correct Basic credentials', async () => {
+      const scope = nock('http://localhost:9091', {
+        reqheaders: {
+          authorization: `Basic ${Buffer.from('pushgate-user:hunter2').toString('base64')}`,
+        },
+      })
+        .post('/metrics/job/test-job')
+        .reply(200);
+
+      await pushMetrics('http://localhost:9091', 'test-job', { totalStatements: 1, totalCoveredStatements: 1, packageCoverage: {} }, {}, 'pushgate-user', 'hunter2');
+
+      expect(scope.isDone()).toBe(true);
+    });
+
+    it('should not send Authorization header when credentials are omitted', async () => {
+      let capturedHeaders;
+      nock('http://localhost:9091')
+        .post('/metrics/job/test-job')
+        .reply(200, function () { capturedHeaders = this.req.headers; });
+
+      await pushMetrics('http://localhost:9091', 'test-job', { totalStatements: 1, totalCoveredStatements: 1, packageCoverage: {} }, {});
+
+      expect(capturedHeaders.authorization).toBeUndefined();
+    });
   });
 });
