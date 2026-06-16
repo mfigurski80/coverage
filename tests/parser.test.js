@@ -31,4 +31,17 @@ github.com/owner/repo/package2/file3.go:8.1,10.2 1 1
     expect(result.packageCoverage['github.com/owner/repo/package1']).toEqual({ totalStatements: 3, coveredStatements: 2 });
     expect(result.packageCoverage['github.com/owner/repo/package2']).toEqual({ totalStatements: 1, coveredStatements: 1 });
   });
+
+  it.each(['mode: set', 'mode: count', 'mode: atomic'])('should skip %s header without producing NaN or a "." package', (header) => {
+    const headerFilePath = path.join(__dirname, `coverage-${header.replace(/\W/g, '_')}.txt`);
+    fs.writeFileSync(headerFilePath, `${header}\ngithub.com/owner/repo/pkg/file.go:1.1,2.2 5 1\n`);
+
+    const result = parseCoverage(headerFilePath);
+
+    expect(result.totalStatements).toBe(5);
+    expect(result.totalCoveredStatements).toBe(5);
+    expect(result.packageCoverage['.']).toBeUndefined();
+
+    fs.unlinkSync(headerFilePath);
+  });
 });
