@@ -8,6 +8,12 @@ inputs:
   labels:
     description: 'Additional labels to add to the metric (e.g., "env=prod,region=us-east-1")'
     required: false
+  username:
+    description: 'Basic auth username for the Pushgateway'
+    required: false
+  password:
+    description: 'Basic auth password for the Pushgateway'
+    required: false
 runs:
   using: 'node24'
   main: 'dist/index.js' 

@@ -8,6 +8,8 @@ async function run() {
   try {
     const prometheusEndpoint = core.getInput('prometheus_endpoint', { required: true });
     const labelsStr = core.getInput('labels');
+    const username = core.getInput('username');
+    const password = core.getInput('password');
     const coverageFilePath = path.join(process.env.GITHUB_WORKSPACE, 'coverage.txt');
 
     const coverageData = parseCoverage(coverageFilePath);
@@ -23,7 +25,7 @@ async function run() {
     const { owner, repo } = github.context.repo;
     const jobName = `${owner}_${repo}_${github.context.job}`;
 
-    await pushMetrics(prometheusEndpoint, jobName, coverageData, labels);
+    await pushMetrics(prometheusEndpoint, jobName, coverageData, labels, username, password);
 
   } catch (error) {
     core.setFailed(error.message);

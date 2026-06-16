@@ -6,6 +6,8 @@ This GitHub Action calculates Go code coverage from a `coverage.txt` file and pu
 
 *   `prometheus_endpoint` (required): The endpoint of the Prometheus Pushgateway.
 *   `labels` (optional): Additional labels to include in the Pushgateway grouping key (e.g., "env=prod,region=us-east-1"). Each label becomes a path segment in the push URL, ensuring pushes with different label values write to separate metric groups.
+*   `username` (optional): Basic auth username for the Pushgateway.
+*   `password` (optional): Basic auth password for the Pushgateway. Use a GitHub Actions secret.
 
 ## Example Usage in a Workflow
 
@@ -26,8 +28,10 @@ jobs:
     - name: Go Code Coverage to Prometheus
       uses: mfigurski80/coverage@v0.0.2
       with:
-        prometheus_endpoint: 'http://your-pushgateway.com:9091'
+        prometheus_endpoint: 'https://your-pushgateway.com'
         labels: 'branch=${{ github.ref_name }}'
+        username: 'your-username'
+        password: ${{ secrets.PUSHGATEWAY_PASSWORD }}
 ```
 
 ## Example Prometheus Metric

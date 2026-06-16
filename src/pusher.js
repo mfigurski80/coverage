@@ -8,7 +8,7 @@ function fmtLabelPath(labels) {
     .join('/')
 }
 
-export async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels) {
+export async function pushMetrics(prometheusEndpoint, jobName, coverageData, labels, username, password) {
   const { totalStatements, totalCoveredStatements, packageCoverage } = coverageData;
 
   let metrics = `# TYPE go_test_coverage_statements gauge\n`;
@@ -27,7 +27,9 @@ export async function pushMetrics(prometheusEndpoint, jobName, coverageData, lab
   const url = `${prometheusEndpoint}/metrics/job/${jobName}${fmtLabelPath(labels)}`;
 
   try {
-    await axios.post(url, metrics, { headers: { 'Content-Type': 'text/plain' } });
+    const config = { headers: { 'Content-Type': 'text/plain' } };
+    if (username && password) config.auth = { username, password };
+    await axios.post(url, metrics, config);
     console.log('Successfully pushed metrics to Prometheus Pushgateway.');
   } catch (err) {
     console.error('Error pushing metrics to Prometheus Pushgateway:', err.message);
